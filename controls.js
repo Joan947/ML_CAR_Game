@@ -1,11 +1,19 @@
 class Controls{
-    constructor(){
+    constructor(type){
         this.forward= false;
         this.reverse= false;
         this.left = false;
         this.right = false;
 // "#" is used because the method is private
-        this.#addKeyboardListeners();
+        switch(type){
+            case "KEYS":
+                this.#addKeyboardListeners();
+                break;
+            case "DUMMY":
+                this.forward =true;
+                break;
+        }
+        
     }
     #addKeyboardListeners(){
         // used the arrow function instead of function(event){}
