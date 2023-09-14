@@ -10,15 +10,53 @@ class Car{
         this.maxSpeed = 3;
         this.friction = 0.03;
         this.angle = 0;
-
+        this.damaged = false;
+        this.roadBorders = [];
         this.sensor = new Sensor(this);
         this.controls = new Controls();
         
     }
     // remember that y axis is positive downwards
     update(roadBorders){
-       this.#move();
+       if(!this.damaged){
+        this.#move();
+       this.roadBorders=roadBorders.map(road=>road);
+       this.polygon = this.#createPolygon();
+       this.damaged = this.#assessDamage(roadBorders);
+       }
+       
        this.sensor.update(roadBorders);
+    }
+    #assessDamage(roadBorders){
+        for(let i=0; i<roadBorders.length; i++){
+            if(polysIntersect(this.polygon,roadBorders[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    #createPolygon(){
+        const points = [];
+        const radius = Math.hypot(this.width,this.height)/2;
+        const alpha = Math.atan2(this.width,this.height);
+        points.push({
+            x:this.x-Math.sin(this.angle-alpha)*radius,
+            y:this.y-Math.cos(this.angle-alpha)*radius
+        });
+        points.push({
+            x:this.x-Math.sin(this.angle+alpha)*radius,
+            y:this.y-Math.cos(this.angle+alpha)*radius
+        });
+        points.push({
+            x:this.x-Math.sin(Math.PI+this.angle-alpha)*radius,
+            y:this.y-Math.cos(Math.PI+this.angle-alpha)*radius
+        });
+        points.push({
+            x:this.x-Math.sin(Math.PI+this.angle+alpha)*radius,
+            y:this.y-Math.cos(Math.PI+this.angle+alpha)*radius
+        });
+        return points;
     }
     #move(){
         if(this.controls.forward){
@@ -56,20 +94,51 @@ class Car{
         this.y -= Math.cos(this.angle)*this.speed ;
     }
     draw(context){
-        context.save();
-        context.translate(this.x, this.y);
-        context.rotate(-this.angle);
+        // this draws a rect 
+        // context.save();
+        // context.translate(this.x, this.y);
+        // context.rotate(-this.angle);
+        // context.beginPath();
+        // context.rect(
+        //     -this.width/2,
+        //     -this.height/2,
+        //     this.width,
+        //     this.height
+        // );
+        // context.fill();
+        // context.restore();
+        if (this.damaged){
+            context.fillStyle = "red";
+            context.font = "48px bold Arial";
+            context.fillText("GAME OVER",this.x+30, this.y-30);
+        }
+        else{
+            context.fillStyle = "black";
+        }
+
+        //this draws a polygon that will enable us to know the front
+        // and back sides of the object
+
         context.beginPath();
-        context.rect(
-            -this.width/2,
-            -this.height/2,
-            this.width,
-            this.height
-        );
-        context.fill();
+        context.moveTo(this.polygon[0].x, this.polygon[0].y);
+        for(let i =0 ; i<this.polygon.length;i++){
+            context.lineTo(this.polygon[i].x,this.polygon[i].y);
+        }
+        //out of lane detection
+        for(let i =0 ; i<this.polygon.length;i++){
+            if(this.polygon[i].x + 15< this.roadBorders[0][0].x
+                || this.polygon[i].x + 15< this.roadBorders[0][1].x
+                || this.polygon[i].x - 15> this.roadBorders[1][0].x
+                || this.polygon[i].x - 15> this.roadBorders[1][1].x){
+                context.fillStyle = "red";
+            context.font = "48px bold Arial";
+            context.fillText("OUT OF LANE",this.x+25, this.y-70);
+            }
+        }
         
-        context.restore();
-        this.sensor.draw(context);    
+        context.fill();
+        this.sensor.draw(context);  
+          
         ;
     }
 }

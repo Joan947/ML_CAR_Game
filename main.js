@@ -1,17 +1,17 @@
 canvas = document.getElementById("myCanvas");
 
-canvas.width = 200;
+canvas.width = window.innerWidth;
 
 //draw car with canvas context
 const context = canvas.getContext("2d");
 //used this canvas.width*0.9 to bring the road inwards
-const road = new Road(canvas.width/2,canvas.width*0.9);
+const road = new Road(canvas.width/2,canvas.width/4);
 const car = new Car(road.getLaneCenter(1), 100, 30, 50);
 
 animate();
 // updates movements of the car and draws it alongits axis
 function animate(){
-    car.update(roadBorders);
+    car.update(road.borders);
     canvas.height = window.innerHeight;
     //create the moving road effect using translate
     context.save();

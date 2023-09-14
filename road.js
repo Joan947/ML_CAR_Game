@@ -30,8 +30,17 @@ class Road{
         return this.left + laneWidth/2 + Math.min(laneIndex,this.laneCount-1)*laneWidth;
     }
     draw(context){
+
+        context.moveTo(this.borders[0][0].x-15,this.borders[0][0].y);
+        context.lineTo(this.borders[0][1].x-15,this.borders[0][1].y);
+        context.lineTo(this.borders[1][1].x+15,this.borders[1][1].y);
+        context.lineTo(this.borders[1][0].x+15,this.borders[1][0].y);
+        context.closePath();
+        context.fillStyle = "#2d2d2d";
+        context.fill();
         context.lineWidth = 5;
         context.strokeStyle = "white";
+        
         for(let i=1; i<=this.laneCount-1;i++){
             const x = lerp(
                 this.left,
@@ -49,8 +58,14 @@ class Road{
         this.borders.forEach(border => {
             context.beginPath();
             context.moveTo(border[0].x, border[0].y);
-            context.lineTo(border[1].x, border[1].y)
+            context.lineTo(border[1].x, border[1].y);
             context.stroke();
+            
         });
+        
+       
+        //context.lineTo(topLeft.x,topLeft.y);
+        //context.fill();
+        
     }
 }
