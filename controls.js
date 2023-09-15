@@ -5,6 +5,8 @@ class Controls{
         this.left = false;
         this.right = false;
 // "#" is used because the method is private
+// for ControlType use KEYS for manual control, DUMMY for code control
+// and AI for machine algorithm control
         switch(type){
             case "KEYS":
                 this.#addKeyboardListeners();

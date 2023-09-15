@@ -11,9 +11,13 @@ class Car{
         this.friction = 0.03;
         this.angle = 0;
         this.damaged = false;
+        this.useBrain = controlType=="AI";
         this.roadBorders = [];
         if(controlType != "DUMMY"){
             this.sensor = new Sensor(this); 
+            this.brain = new NeuralNetwork(
+                [this.sensor.rayCount,6,4]
+                );
         }
         
         this.controls = new Controls(controlType);
@@ -29,9 +33,22 @@ class Car{
        }
        if(this.sensor){
        this.sensor.update(roadBorders,traffic);
+       const offsets = this.sensor.readings.map(
+        s=>s==null?0:1-s.offset
+        );
+        const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+        //console.log(outputs);
+
+            if(this.useBrain){
+                this.controls.forward = outputs[0];
+                this.controls.left = outputs[1];
+                this.controls.right = outputs[2];
+                this.controls.reverse = outputs[3];
+
+            }
        }
     }
-    //border detection
+    //car collision detection
     #assessDamage(roadBorders, traffic){
         for(let i=0; i<roadBorders.length; i++){
             if(polysIntersect(this.polygon,roadBorders[i])){
@@ -121,8 +138,9 @@ class Car{
         // context.restore();
         if (this.damaged){
             context.fillStyle = "red";
-            context.font = "48px bold Arial";
+            context.font = "48px bold Lucida";
             context.fillText("GAME OVER",this.x+30, this.y-30);
+            context.fillStyle = "lightgray";
         }
         else{
             context.fillStyle = color;
@@ -143,8 +161,9 @@ class Car{
                 || this.polygon[i].x - 15> this.roadBorders[1][0].x
                 || this.polygon[i].x - 15> this.roadBorders[1][1].x){
                 context.fillStyle = "red";
-            context.font = "48px bold Arial";
+            context.font = "48px bold Lucida";
             context.fillText("OUT OF LANE",this.x+25, this.y-70);
+            context.fillStyle = "brown";
             }
         }
         
