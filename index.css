@@ -3,6 +3,22 @@ body{
     overflow: hidden;
     text-align: center;
     background-color: darkgrey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#buttons{
+    display: flex;
+    flex-direction: column;
+}
+button{
+    border-radius: 5px;
+    margin: 2px;
+    cursor: pointer;
+}
+button:hover{
+    background: greenyellow;
 }
 #myCanvas{
     background-color: lightgrey;

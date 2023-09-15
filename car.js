@@ -4,7 +4,6 @@ class Car{
         this.y = y;
         this.width = width;
         this.height = height;
-
         this.speed = 0;
         this.acceleration = 0.2;
         this.maxSpeed = maxSpeed;
@@ -122,24 +121,13 @@ class Car{
         this.x -= Math.sin(this.angle)*this.speed;
         this.y -= Math.cos(this.angle)*this.speed;
     }
-    draw(context, color){
-        // this draws a rect 
-        // context.save();
-        // context.translate(this.x, this.y);
-        // context.rotate(-this.angle);
-        // context.beginPath();
-        // context.rect(
-        //     -this.width/2,
-        //     -this.height/2,
-        //     this.width,
-        //     this.height
-        // );
-        // context.fill();
-        // context.restore();
+    draw(context, color,drawSensor=false){
+        
+        //change color if car is damged
         if (this.damaged){
-            context.fillStyle = "red";
-            context.font = "48px bold Lucida";
-            context.fillText("GAME OVER",this.x+30, this.y-30);
+            // context.fillStyle = "red";
+            // context.font = "48px bold Lucida";
+            // context.fillText("GAME OVER",this.x+30, this.y-30);
             context.fillStyle = "lightgray";
         }
         else{
@@ -168,12 +156,9 @@ class Car{
         }
         
         context.fill();
-        if(this.sensor){
+        if(this.sensor && drawSensor){
             this.sensor.draw(context); 
         }
-         
-          
-        ;
     }
 }
 
