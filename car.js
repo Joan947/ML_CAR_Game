@@ -1,5 +1,5 @@
 class Car{
-    constructor(x,y,width,height, controlType, maxSpeed=3){
+    constructor(x,y,width,height, controlType, maxSpeed=3, color = "blue"){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -12,15 +12,34 @@ class Car{
         this.damaged = false;
         this.useBrain = controlType=="AI";
         this.roadBorders = [];
-        if(controlType != "DUMMY"){
+        if(controlType != "DUMMY" ||controlType != "KEYS"){
             this.sensor = new Sensor(this); 
             this.brain = new NeuralNetwork(
                 [this.sensor.rayCount,6,4]
                 );
         }
-        
+        else if(controlType != "AI" || controlType != "DUMMY"){
+            this.sensor = new Sensor(this); 
+          
+        }
         this.controls = new Controls(controlType);
         
+        this.img = new Image();
+        this.img.src = "car.png";
+        //create a canvas within the car to customize colors
+
+        this.mask = document.createElement("canvas");
+        this.mask.width = width;
+        this.mask.height = height;
+
+        const mctx = this.mask.getContext("2d");
+        this.img.onload=()=>{
+            mctx.fillStyle = color;
+            mctx.rect(0,0,this.width,this.height);
+            mctx.fill();
+            mctx.globalCompositeOperation = "destination-atop";
+            mctx.drawImage(this.img,0,0,this.width,this.height);
+        }
     }
     // remember that y axis is positive downwards
     update(roadBorders,traffic ){
@@ -121,45 +140,108 @@ class Car{
         this.x -= Math.sin(this.angle)*this.speed;
         this.y -= Math.cos(this.angle)*this.speed;
     }
-    draw(context, color,drawSensor=false){
-        
-        //change color if car is damged
-        if (this.damaged){
-            // context.fillStyle = "red";
-            // context.font = "48px bold Lucida";
-            // context.fillText("GAME OVER",this.x+30, this.y-30);
-            context.fillStyle = "lightgray";
+    draw(context,drawSensor=false){
+        context.save();
+        context.translate(this.x,this.y);
+        context.rotate(-this.angle);
+        if(!this.damaged){
+            context.drawImage(this.mask,
+                -this.width/2,
+                -this.height/2,
+                this.width,
+                this.height
+            );
+            context.globalCompositeOperation = "multiply";
         }
-        else{
-            context.fillStyle = color;
-        }
+        context.drawImage(this.img,
+            -this.width/2,
+            -this.height/2,
+            this.width,
+            this.height
+        );
+        context.restore();
 
-        //this draws a polygon that will enable us to know the front
-        // and back sides of the object
-
-        context.beginPath();
-        context.moveTo(this.polygon[0].x, this.polygon[0].y);
-        for(let i =0 ; i<this.polygon.length;i++){
-            context.lineTo(this.polygon[i].x,this.polygon[i].y);
-        }
-        //out of lane detection
-        for(let i =0 ; i<this.polygon.length;i++){
-            if(this.polygon[i].x + 15< this.roadBorders[0][0].x
-                || this.polygon[i].x + 15< this.roadBorders[0][1].x
-                || this.polygon[i].x - 15> this.roadBorders[1][0].x
-                || this.polygon[i].x - 15> this.roadBorders[1][1].x){
-                context.fillStyle = "red";
-            context.font = "48px bold Lucida";
-            context.fillText("OUT OF LANE",this.x+25, this.y-70);
-            context.fillStyle = "brown";
-            }
-        }
-        
-        context.fill();
         if(this.sensor && drawSensor){
             this.sensor.draw(context); 
         }
+
+        // //change color if car is damged
+        // if (this.damaged){
+        //     // context.fillStyle = "red";
+        //     // context.font = "48px bold Lucida";
+        //     // context.fillText("GAME OVER",this.x+30, this.y-30);
+        //     context.fillStyle = "lightgray";
+        // }
+        // else{
+        //     context.fillStyle = color;
+        // }
+
+        // //this draws a polygon that will enable us to know the front
+        // // and back sides of the object
+
+        // context.beginPath();
+        // context.moveTo(this.polygon[0].x, this.polygon[0].y);
+        // for(let i =0 ; i<this.polygon.length;i++){
+        //     context.lineTo(this.polygon[i].x,this.polygon[i].y);
+        // }
+        // //out of lane detection
+        // for(let i =0 ; i<this.polygon.length;i++){
+        //     if(this.polygon[i].x + 15< this.roadBorders[0][0].x
+        //         || this.polygon[i].x + 15< this.roadBorders[0][1].x
+        //         || this.polygon[i].x - 15> this.roadBorders[1][0].x
+        //         || this.polygon[i].x - 15> this.roadBorders[1][1].x){
+        //         context.fillStyle = "red";
+        //     context.font = "48px bold Lucida";
+        //     context.fillText("OUT OF LANE",this.x+25, this.y-70);
+        //     context.fillStyle = "brown";
+        //     }
+        // }
+        
+        // context.fill();
+        
     }
+
+    //this was used when only a polygon shape was drawn
+    // draw(context,color,drawSensor=false){
+    //     if(this.sensor && drawSensor){
+    //         this.sensor.draw(context); 
+    //     }
+
+    //     //change color if car is damged
+    //     if (this.damaged){
+    //         // context.fillStyle = "red";
+    //         // context.font = "48px bold Lucida";
+    //         // context.fillText("GAME OVER",this.x+30, this.y-30);
+    //         context.fillStyle = "lightgray";
+    //     }
+    //     else{
+    //         context.fillStyle = color;
+    //     }
+
+    //     //this draws a polygon that will enable us to know the front
+    //     // and back sides of the object
+
+    //     context.beginPath();
+    //     context.moveTo(this.polygon[0].x, this.polygon[0].y);
+    //     for(let i =0 ; i<this.polygon.length;i++){
+    //         context.lineTo(this.polygon[i].x,this.polygon[i].y);
+    //     }
+    //     //out of lane detection
+    //     for(let i =0 ; i<this.polygon.length;i++){
+    //         if(this.polygon[i].x + 15< this.roadBorders[0][0].x
+    //             || this.polygon[i].x + 15< this.roadBorders[0][1].x
+    //             || this.polygon[i].x - 15> this.roadBorders[1][0].x
+    //             || this.polygon[i].x - 15> this.roadBorders[1][1].x){
+    //             context.fillStyle = "red";
+    //         context.font = "48px bold Lucida";
+    //         context.fillText("OUT OF LANE",this.x+25, this.y-70);
+    //         context.fillStyle = "brown";
+    //         }
+    //     }
+        
+    //     context.fill();
+        
+    // }
 }
 
 //  export default Car;

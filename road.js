@@ -1,5 +1,5 @@
 class Road{
-    constructor(x, width, laneCount =3){
+    constructor(x, width, laneCount =4){
         this.x = x;
         this.width = width;
         this.laneCount = laneCount;
@@ -10,6 +10,7 @@ class Road{
         const infinity = 100000;
         this.top = infinity;
         this.bottom = -infinity;
+        
 
         const topLeft = {x:this.left,y:this.top};
         const bottomLeft = {x:this.left,y:this.bottom};
