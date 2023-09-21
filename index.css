@@ -54,7 +54,7 @@ strong:hover{
     display: flex;
     flex-direction: column;
 }
-button{
+#cars,#dropdown,button{
     border-radius: 5px;
     margin: 2px;
     cursor: pointer;
