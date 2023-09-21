@@ -6,6 +6,7 @@ class Car{
         this.height = height;
         this.speed = 0;
         this.acceleration = 0.2;
+        this.deceleration = 0.06;
         this.maxSpeed = maxSpeed;
         this.friction = 0.03;
         this.angle = 0;
@@ -78,6 +79,7 @@ class Car{
                 return true;
             }
         }
+       
         return false;
     }
 
@@ -108,7 +110,7 @@ class Car{
             this.speed += this.acceleration;
         }
         if(this.controls.reverse){
-            this.speed -= this.acceleration;
+            this.speed -= this.deceleration;
         }
         if(this.speed > this.maxSpeed){
             this.speed = this. maxSpeed;
@@ -141,6 +143,9 @@ class Car{
         this.y -= Math.cos(this.angle)*this.speed;
     }
     draw(context,drawSensor=false){
+        if(this.sensor && drawSensor){
+            this.sensor.draw(context); 
+        }
         context.save();
         context.translate(this.x,this.y);
         context.rotate(-this.angle);
@@ -161,9 +166,7 @@ class Car{
         );
         context.restore();
 
-        if(this.sensor && drawSensor){
-            this.sensor.draw(context); 
-        }
+      
 
         // //change color if car is damged
         // if (this.damaged){
