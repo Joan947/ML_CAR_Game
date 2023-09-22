@@ -57,8 +57,10 @@ const traffic = [
     new Car(road.getLaneCenter(2), -1065, 30, 50, "DUMMY",2.95, getRandomcolor()),
     new Car(road.getLaneCenter(3), -1080, 30, 50, "DUMMY",2.9, getRandomcolor())
 ];
-//animate();
-animateAI();
+animate();
+
+
+//animateAI();
 
 // generate N-number of cars to speed up training of neural network
 function generateCars(N){
@@ -78,42 +80,42 @@ function discard(){
 
 
 // updates movements of the car and draws it along its axis
-// function animate(){
-//     for(let i=0; i<traffic.length; i++){
-//         traffic[i].update(road.borders,[]);
-//     }
-//     for(let i=0; i<aiCars.length;i++){
-//         aiCars[i].update(road.borders,traffic);
-//     }
+function animate(){
+    for(let i=0; i<traffic.length; i++){
+        traffic[i].update(road.borders,[]);
+    }
+    for(let i=0; i<aiCars.length;i++){
+        aiCars[i].update(road.borders,traffic);
+    }
 
-//     keyCar.update(road.borders,traffic);
-//     keyCar.update(road.borders,aiCars);
-//     //fitness function
-//     bestCar= aiCars.find(
-//         c=>c.y==Math.min(
-//             ...aiCars.map(c=>c.y)
-//         )
-//     );
-//     canvas.height = window.innerHeight;
-//     //create the moving road effect using translate
-//     context.save();
-//     context.translate(0,-keyCar.y+canvas.height*0.75);//for manual control car
-//     road.draw(context);
-//     for(let i=0; i<traffic.length; i++){
-//         traffic[i].draw(context);
-//     }
-//     context.globalAlpha = 0.2;
-//     for(let i=0; i<aiCars.length;i++){
-//         aiCars[i].draw(context);
-//     }
+    keyCar.update(road.borders,traffic);
+    keyCar.update(road.borders,aiCars);
+    //fitness function
+    bestCar= aiCars.find(
+        c=>c.y==Math.min(
+            ...aiCars.map(c=>c.y)
+        )
+    );
+    canvas.height = window.innerHeight;
+    //create the moving road effect using translate
+    context.save();
+    context.translate(0,-keyCar.y+canvas.height*0.75);//for manual control car
+    road.draw(context);
+    for(let i=0; i<traffic.length; i++){
+        traffic[i].draw(context);
+    }
+    context.globalAlpha = 0.2;
+    for(let i=0; i<aiCars.length;i++){
+        aiCars[i].draw(context);
+    }
 
-//     context.globalAlpha = 1;
-//     bestCar.draw(context,true);
-//     keyCar.draw(context,true);
+    context.globalAlpha = 1;
+    bestCar.draw(context,true);
+    keyCar.draw(context,true);
     
-//     context.restore();
-//     requestAnimationFrame(animate);
-// }
+    context.restore();
+    requestAnimationFrame(animate);
+}
 
 function animateAI(){
     for(let i=0; i<traffic.length; i++){
